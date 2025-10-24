@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  # Base de données PostgreSQL
+  postgres:
+    image: postgis/postgis:15-3.3
+    container_name: btp_postgres
+    environment:
+      POSTGRES_DB: btp_app
+      POSTGRES_USER: btp_user
+      POSTGRES_PASSWORD: btp_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - btp_network
+
+  # Redis pour le cache
+  redis:
+    image: redis:7-alpine
+    container_name: btp_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - btp_network
+
+  # Backend Flask
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: btp_backend
+    environment:
+      - FLASK_APP=run.py
+      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://btp_user:btp_password@postgres:5432/btp_app
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+      - backend_uploads:/app/uploads
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - btp_network
+    command: python run.py
+
+  # Worker Celery
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: btp_celery
+    environment:
+      - DATABASE_URL=postgresql://btp_user:btp_password@postgres:5432/btp_app
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - ./backend:/app
+      - backend_uploads:/app/uploads
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - btp_network
+    command: celery -A app.celery worker --loglevel=info
+
+volumes:
+  postgres_data:
+  redis_data:
+  backend_uploads:
+
+networks:
+  btp_network:
+    driver: bridge
