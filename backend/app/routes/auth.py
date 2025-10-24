@@ -82,9 +82,18 @@ def register():
         verification_code = generate_verification_code()
         # Store verification code in Redis or database
         
+        # Create access token for immediate login after registration
+        access_token = create_access_token(identity=user.id)
+        refresh_token = create_access_token(identity=user.id, expires_delta=False)
+        
         return jsonify({
             'message': 'User registered successfully',
+            'accessToken': access_token,
+            'refreshToken': refresh_token,
+            'expiresAt': (datetime.utcnow().timestamp() + 3600) * 1000,  # 1 hour from now in milliseconds
             'user': user.to_dict(),
+            'profile': user.profile.to_dict() if user.profile else None,
+            'sectors': [sector.to_dict() for sector in user.sectors],
             'verification_required': True,
             'verification_code': verification_code  # Remove in production
         }), 201
@@ -123,9 +132,15 @@ def login():
         # Create access token
         access_token = create_access_token(identity=user.id)
         
+        # For now, we'll use the same token as refresh token
+        # In production, you should implement proper refresh token logic
+        refresh_token = create_access_token(identity=user.id, expires_delta=False)
+        
         return jsonify({
             'message': 'Login successful',
-            'access_token': access_token,
+            'accessToken': access_token,
+            'refreshToken': refresh_token,
+            'expiresAt': (datetime.utcnow().timestamp() + 3600) * 1000,  # 1 hour from now in milliseconds
             'user': user.to_dict(),
             'profile': user.profile.to_dict() if user.profile else None,
             'sectors': [sector.to_dict() for sector in user.sectors]

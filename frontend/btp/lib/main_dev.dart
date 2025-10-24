@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'firebase_options.dart';
 import 'core/config/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,29 +9,19 @@ import 'core/services/location_service.dart';
 import 'core/providers/language_provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'core/services/notification_service.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize Firebase (optional for development)
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    print('Firebase initialized successfully');
-  } catch (e) {
-    print('Firebase initialization failed (this is OK for development): $e');
-  }
+  print('🚀 Démarrage de l\'application BTP Multi-Sector (Mode Développement)');
   
   // Initialize Hive for local storage
   await Hive.initFlutter();
   await StorageService.init();
   
-  // Initialize services
+  // Initialize services (sans Firebase)
   await NotificationService.init();
   await LocationService.init();
   
@@ -45,17 +33,12 @@ void main() async {
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: Colors.white,
+      systemNavigationBarColor: Colors.transparent,
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
   
-  // Set preferred orientations
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-  
+  // Run the app
   runApp(
     const ProviderScope(
       child: BTPMultiSectorApp(),
@@ -64,23 +47,16 @@ void main() async {
 }
 
 Future<void> _requestPermissions() async {
-  // Only request permissions on mobile platforms (Android/iOS)
-  // Linux doesn't support permission_handler natively
-  if (Platform.isAndroid || Platform.isIOS) {
-    try {
-      await [
-        Permission.location,
-        Permission.camera,
-        Permission.storage,
-        Permission.notification,
-        Permission.microphone,
-      ].request();
-    } catch (e) {
-      print('Permission request failed: $e');
-    }
-  } else {
-    print('Skipping permission requests on ${Platform.operatingSystem}');
-  }
+  // Request location permission
+  await Permission.location.request();
+  
+  // Request camera permission
+  await Permission.camera.request();
+  
+  // Request notification permission
+  await Permission.notification.request();
+  
+  print('✅ Permissions demandées');
 }
 
 class BTPMultiSectorApp extends ConsumerWidget {
@@ -88,25 +64,21 @@ class BTPMultiSectorApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeProvider);
-    final locale = ref.watch(languageProvider);
-
+    final themeState = ref.watch(themeProvider);
+    final languageState = ref.watch(languageProvider);
+    
     return MaterialApp.router(
       title: AppConfig.appName,
       debugShowCheckedModeBanner: false,
       theme: ThemeConfig.lightTheme,
       darkTheme: ThemeConfig.darkTheme,
-      themeMode: themeMode.themeMode,
-      locale: locale.locale,
-      supportedLocales: AppConfig.supportedLocales,
-      localizationsDelegates: AppConfig.localizationsDelegates,
+      themeMode: themeState.themeMode,
+      locale: languageState.locale,
       routerConfig: AppRouter.router,
       builder: (context, child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(
-            textScaler: TextScaler.linear(
-              MediaQuery.of(context).textScaleFactor.clamp(0.8, 1.2),
-            ),
+            textScaler: const TextScaler.linear(1.0),
           ),
           child: child!,
         );
