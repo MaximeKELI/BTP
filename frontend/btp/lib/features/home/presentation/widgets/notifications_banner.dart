@@ -11,9 +11,10 @@ class NotificationsBanner extends StatelessWidget {
     const hasNotifications = true; // TODO: Replace with real provider
     const notificationCount = 3; // TODO: Replace with real provider
 
-    if (!hasNotifications) {
-      return const SizedBox.shrink();
-    }
+    // For now, always show notifications (remove dead code)
+    // if (!hasNotifications) {
+    //   return const SizedBox.shrink();
+    // }
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: AppConfig.spacingM),

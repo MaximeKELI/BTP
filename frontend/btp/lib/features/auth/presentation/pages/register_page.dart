@@ -24,7 +24,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
-  final List<String> _selectedSectors = [];
+  // final List<String> _selectedSectors = []; // TODO: Implement sector selection
 
   @override
   void dispose() {

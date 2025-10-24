@@ -87,11 +87,11 @@ class LocationService {
     return true;
   }
   
-  // Check location permission
-  static Future<bool> _checkLocationPermission() async {
-    // In a real app, this would check location permission
-    return true;
-  }
+  // Check location permission (currently unused)
+  // static Future<bool> _checkLocationPermission() async {
+  //   // In a real app, this would check location permission
+  //   return true;
+  // }
   
   // Request location permission
   static Future<bool> requestLocationPermission() async {
