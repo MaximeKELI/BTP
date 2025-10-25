@@ -4,7 +4,10 @@ try:
     from geoalchemy2 import Geometry
 except ImportError:
     Geometry = None
-from sqlalchemy.dialects.postgresql import JSONB
+try:
+    from sqlalchemy.dialects.postgresql import JSONB
+except ImportError:
+    JSONB = None
 from sqlalchemy import Column, Integer, DateTime, String, Text, Boolean
 
 class BaseModel(db.Model):
@@ -18,10 +21,16 @@ class BaseModel(db.Model):
     
     def to_dict(self):
         """Convert model to dictionary"""
-        return {
-            column.name: getattr(self, column.name)
-            for column in self.__table__.columns
-        }
+        data = {}
+        for column in self.__table__.columns:
+            value = getattr(self, column.name)
+            if hasattr(value, 'isoformat'):  # datetime objects
+                data[column.name] = value.isoformat()
+            elif hasattr(value, 'value'):  # enum objects
+                data[column.name] = value.value
+            else:
+                data[column.name] = value
+        return data
     
     def save(self):
         """Save model to database"""
@@ -81,7 +90,7 @@ class LocationMixin:
 
 class MetadataMixin:
     """Mixin for models with JSON metadata"""
-    metadata = Column(JSONB, nullable=True)
+    metadata = Column(JSONB if JSONB else Text, nullable=True)
     
     def set_metadata(self, key, value):
         """Set metadata value"""
