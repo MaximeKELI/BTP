@@ -42,7 +42,11 @@ class ApiService {
   static late String _baseUrl;
   
   static void init() {
-    _baseUrl = '${AppConfig.apiBaseUrl}/${AppConfig.apiVersion}';
+    if (AppConfig.apiVersion.isNotEmpty) {
+      _baseUrl = '${AppConfig.apiBaseUrl}/${AppConfig.apiVersion}';
+    } else {
+      _baseUrl = AppConfig.apiBaseUrl;
+    }
   }
   
   // GET request

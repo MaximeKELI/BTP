@@ -5,7 +5,7 @@ class AppConfig {
   static const String appName = 'BTP Multi-Sector';
   static const String appVersion = '1.0.0';
   static const String apiBaseUrl = 'http://localhost:5000/api';
-  static const String apiVersion = 'v1';
+  static const String apiVersion = '';
   
   // Supported locales
   static const List<Locale> supportedLocales = [

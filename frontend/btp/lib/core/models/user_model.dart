@@ -40,26 +40,30 @@ class User {
     return User(
       id: json['id'] as int,
       email: json['email'] as String,
-      firstName: json['firstName'] as String,
-      lastName: json['lastName'] as String,
+      firstName: json['first_name'] as String,
+      lastName: json['last_name'] as String,
       phone: json['phone'] as String?,
       avatar: json['avatar'] as String?,
       role: json['role'] as String,
-      sectors: List<String>.from(json['sectors'] as List),
+      sectors: json['sectors'] != null 
+          ? List<String>.from(json['sectors'] as List)
+          : <String>[],
       profile: json['profile'] != null 
           ? UserProfile.fromJson(json['profile'] as Map<String, dynamic>)
           : null,
       settings: json['settings'] != null
           ? UserSettings.fromJson(json['settings'] as Map<String, dynamic>)
           : null,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-      isActive: json['isActive'] as bool,
-      isEmailVerified: json['isEmailVerified'] as bool,
-      lastLoginAt: json['lastLoginAt'] != null 
-          ? DateTime.parse(json['lastLoginAt'] as String)
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: json['updated_at'] != null 
+          ? DateTime.parse(json['updated_at'] as String)
+          : DateTime.parse(json['created_at'] as String), // Fallback to created_at
+      isActive: json['is_active'] as bool,
+      isEmailVerified: json['is_verified'] as bool,
+      lastLoginAt: json['last_login'] != null 
+          ? DateTime.parse(json['last_login'] as String)
           : null,
-      fcmToken: json['fcmToken'] as String?,
+      fcmToken: json['fcm_token'] as String?,
     );
   }
 
@@ -136,93 +140,147 @@ class User {
 }
 
 class UserProfile {
+  final int id;
+  final int userId;
   final String? bio;
   final String? company;
-  final String? position;
-  final String? website;
-  final String? location;
+  final String? jobTitle;
+  final String? avatarUrl;
+  final String? birthDate;
+  final String? gender;
+  final int? experienceYears;
+  final String? currency;
   final String? timezone;
   final String? language;
-  final Map<String, dynamic>? preferences;
+  final bool emailNotifications;
+  final bool pushNotifications;
+  final bool smsNotifications;
   final List<String>? skills;
   final List<String>? certifications;
-  final Map<String, dynamic>? socialLinks;
+  final Map<String, dynamic>? metadata;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   const UserProfile({
+    required this.id,
+    required this.userId,
     this.bio,
     this.company,
-    this.position,
-    this.website,
-    this.location,
+    this.jobTitle,
+    this.avatarUrl,
+    this.birthDate,
+    this.gender,
+    this.experienceYears,
+    this.currency,
     this.timezone,
     this.language,
-    this.preferences,
+    required this.emailNotifications,
+    required this.pushNotifications,
+    required this.smsNotifications,
     this.skills,
     this.certifications,
-    this.socialLinks,
+    this.metadata,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     return UserProfile(
+      id: json['id'] as int,
+      userId: json['user_id'] as int,
       bio: json['bio'] as String?,
       company: json['company'] as String?,
-      position: json['position'] as String?,
-      website: json['website'] as String?,
-      location: json['location'] as String?,
+      jobTitle: json['job_title'] as String?,
+      avatarUrl: json['avatar_url'] as String?,
+      birthDate: json['birth_date'] as String?,
+      gender: json['gender'] as String?,
+      experienceYears: json['experience_years'] as int?,
+      currency: json['currency'] as String?,
       timezone: json['timezone'] as String?,
       language: json['language'] as String?,
-      preferences: json['preferences'] as Map<String, dynamic>?,
+      emailNotifications: json['email_notifications'] as bool,
+      pushNotifications: json['push_notifications'] as bool,
+      smsNotifications: json['sms_notifications'] as bool,
       skills: json['skills'] != null 
           ? List<String>.from(json['skills'] as List)
           : null,
       certifications: json['certifications'] != null
           ? List<String>.from(json['certifications'] as List)
           : null,
-      socialLinks: json['socialLinks'] as Map<String, dynamic>?,
+      metadata: json['metadata'] as Map<String, dynamic>?,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
+      'user_id': userId,
       'bio': bio,
       'company': company,
-      'position': position,
-      'website': website,
-      'location': location,
+      'job_title': jobTitle,
+      'avatar_url': avatarUrl,
+      'birth_date': birthDate,
+      'gender': gender,
+      'experience_years': experienceYears,
+      'currency': currency,
       'timezone': timezone,
       'language': language,
-      'preferences': preferences,
+      'email_notifications': emailNotifications,
+      'push_notifications': pushNotifications,
+      'sms_notifications': smsNotifications,
       'skills': skills,
       'certifications': certifications,
-      'socialLinks': socialLinks,
+      'metadata': metadata,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
     };
   }
 
   UserProfile copyWith({
+    int? id,
+    int? userId,
     String? bio,
     String? company,
-    String? position,
-    String? website,
-    String? location,
+    String? jobTitle,
+    String? avatarUrl,
+    String? birthDate,
+    String? gender,
+    int? experienceYears,
+    String? currency,
     String? timezone,
     String? language,
-    Map<String, dynamic>? preferences,
+    bool? emailNotifications,
+    bool? pushNotifications,
+    bool? smsNotifications,
     List<String>? skills,
     List<String>? certifications,
-    Map<String, dynamic>? socialLinks,
+    Map<String, dynamic>? metadata,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return UserProfile(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
       bio: bio ?? this.bio,
       company: company ?? this.company,
-      position: position ?? this.position,
-      website: website ?? this.website,
-      location: location ?? this.location,
+      jobTitle: jobTitle ?? this.jobTitle,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      birthDate: birthDate ?? this.birthDate,
+      gender: gender ?? this.gender,
+      experienceYears: experienceYears ?? this.experienceYears,
+      currency: currency ?? this.currency,
       timezone: timezone ?? this.timezone,
       language: language ?? this.language,
-      preferences: preferences ?? this.preferences,
+      emailNotifications: emailNotifications ?? this.emailNotifications,
+      pushNotifications: pushNotifications ?? this.pushNotifications,
+      smsNotifications: smsNotifications ?? this.smsNotifications,
       skills: skills ?? this.skills,
       certifications: certifications ?? this.certifications,
-      socialLinks: socialLinks ?? this.socialLinks,
+      metadata: metadata ?? this.metadata,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 }
@@ -341,7 +399,9 @@ class AuthResponse {
       user: User.fromJson(json['user'] as Map<String, dynamic>),
       accessToken: json['accessToken'] as String,
       refreshToken: json['refreshToken'] as String,
-      expiresAt: DateTime.parse(json['expiresAt'] as String),
+      expiresAt: DateTime.fromMillisecondsSinceEpoch(
+        (json['expiresAt'] as num).toInt(),
+      ),
     );
   }
 

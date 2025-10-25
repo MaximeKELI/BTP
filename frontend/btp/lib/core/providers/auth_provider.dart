@@ -76,13 +76,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
         rememberMe: rememberMe,
       );
       
-      final response = await ApiService.post<AuthResponse>(
+      final response = await ApiService.post<Map<String, dynamic>>(
         '/auth/login',
         data: request.toJson(),
       );
       
       if (response.isSuccess && response.data != null) {
-        final authResponse = response.data!;
+        final authResponse = AuthResponse.fromJson(response.data!);
         
         // Save tokens and user data
         await StorageService.saveAuthToken(authResponse.accessToken);
@@ -117,13 +117,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true, error: null);
     
     try {
-      final response = await ApiService.post<AuthResponse>(
+      final response = await ApiService.post<Map<String, dynamic>>(
         '/auth/register',
         data: request.toJson(),
       );
       
       if (response.isSuccess && response.data != null) {
-        final authResponse = response.data!;
+        final authResponse = AuthResponse.fromJson(response.data!);
         
         // Save tokens and user data
         await StorageService.saveAuthToken(authResponse.accessToken);
