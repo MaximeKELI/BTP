@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'core/config/theme_config.dart';
 import 'core/config/route_config.dart';
+import 'core/services/api_service.dart';
 import 'core/services/storage_service.dart';
 import 'core/providers/theme_provider.dart';
 import 'core/services/location_service.dart';
@@ -34,6 +35,7 @@ void main() async {
   await StorageService.init();
   
   // Initialize services
+  ApiService.init();
   await NotificationService.init();
   await LocationService.init();
   

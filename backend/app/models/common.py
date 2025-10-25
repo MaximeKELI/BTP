@@ -28,8 +28,19 @@ class BaseModel(db.Model):
                 data[column.name] = value.isoformat()
             elif hasattr(value, 'value'):  # enum objects
                 data[column.name] = value.value
+            elif hasattr(value, '__class__') and ('MetaData' in str(type(value)) or 'Geometry' in str(type(value))):  # MetaData/Geometry objects
+                data[column.name] = None
+            elif value is None:
+                data[column.name] = None
             else:
-                data[column.name] = value
+                try:
+                    # Try to serialize the value
+                    import json
+                    json.dumps(value)
+                    data[column.name] = value
+                except (TypeError, ValueError):
+                    # If it can't be serialized, convert to string or None
+                    data[column.name] = str(value) if value is not None else None
         return data
     
     def save(self):
@@ -85,7 +96,8 @@ class LocationMixin:
             'address': self.address,
             'city': self.city,
             'country': self.country,
-            'postal_code': self.postal_code
+            'postal_code': self.postal_code,
+            'location': str(self.location) if self.location else None
         }
 
 class MetadataMixin:

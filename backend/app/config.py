@@ -39,7 +39,7 @@ class DevelopmentConfig(Config):
     """Development configuration"""
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.getenv(
-        'DEV_DATABASE_URL',
+        'DATABASE_URL',
         'sqlite:///btp_app_dev.db'
     )
 

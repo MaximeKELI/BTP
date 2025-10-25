@@ -134,7 +134,7 @@ class UserProfile(BaseModel, MetadataMixin):
             'language': self.language,
             'timezone': self.timezone,
             'currency': self.currency,
-            'metadata': self.metadata,
+            'metadata': self.metadata if isinstance(self.metadata, dict) else {},
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
@@ -169,7 +169,7 @@ class UserSector(BaseModel, LocationMixin, MetadataMixin):
             'service_radius': self.service_radius,
             'is_available': self.is_available,
             'location': self.get_location_dict(),
-            'metadata': self.metadata,
+            'metadata': self.metadata if isinstance(self.metadata, dict) else {},
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
