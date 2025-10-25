@@ -1,5 +1,6 @@
 from datetime import datetime
 from app import db
+from sqlalchemy import Column, Integer, DateTime, String, Text, Boolean, JSON
 try:
     from geoalchemy2 import Geometry
 except ImportError:
@@ -8,7 +9,6 @@ try:
     from sqlalchemy.dialects.postgresql import JSONB
 except ImportError:
     JSONB = None
-from sqlalchemy import Column, Integer, DateTime, String, Text, Boolean
 
 class BaseModel(db.Model):
     """Base model with common fields"""
