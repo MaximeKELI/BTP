@@ -50,6 +50,16 @@ class User(BaseModel, LocationMixin, MetadataMixin):
     profile = db.relationship('UserProfile', backref='user', uselist=False, cascade='all, delete-orphan')
     sectors = db.relationship('UserSector', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     
+    # BTP Platform relationships
+    worker_profile = db.relationship('Worker', back_populates='user', uselist=False, cascade='all, delete-orphan')
+    owned_equipment = db.relationship('Equipment', foreign_keys='Equipment.owner_id', back_populates='owner')
+    client_projects = db.relationship('Project', foreign_keys='Project.client_id', back_populates='client')
+    managed_projects = db.relationship('Project', foreign_keys='Project.project_manager_id', back_populates='project_manager')
+    client_quotes = db.relationship('Quote', foreign_keys='Quote.client_id', back_populates='client')
+    client_bookings = db.relationship('Booking', foreign_keys='Booking.client_id', back_populates='client')
+    worker_reviews = db.relationship('WorkerReview', foreign_keys='WorkerReview.client_id', back_populates='client')
+    equipment_reviews = db.relationship('EquipmentReview', foreign_keys='EquipmentReview.client_id', back_populates='client')
+    
     def set_password(self, password):
         """Hash and set password"""
         self.password_hash = generate_password_hash(password)

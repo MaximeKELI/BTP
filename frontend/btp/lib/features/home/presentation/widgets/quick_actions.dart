@@ -1,110 +1,145 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import '../../../../core/config/app_config.dart';
 
 class QuickActions extends StatelessWidget {
   const QuickActions({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final actions = [
-      {
-        'title': 'Rechercher',
-        'icon': Icons.search,
-        'color': Colors.blue,
-        'route': '/home/search',
-      },
-      {
-        'title': 'Carte',
-        'icon': Icons.map,
-        'color': Colors.green,
-        'route': '/home/maps',
-      },
-      {
-        'title': 'Chat',
-        'icon': Icons.chat,
-        'color': Colors.orange,
-        'route': '/home/chat',
-      },
-      {
-        'title': 'Paiements',
-        'icon': Icons.payment,
-        'color': Colors.purple,
-        'route': '/home/payments',
-      },
-    ];
-
-    return Container(
-      padding: const EdgeInsets.all(AppConfig.spacingM),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Actions Rapides',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Actions rapides',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
           ),
-          
-          const SizedBox(height: AppConfig.spacingM),
-          
-          SizedBox(
-            height: 100,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: actions.length,
-              itemBuilder: (context, index) {
-                final action = actions[index];
-                return _buildActionCard(context, action);
-              },
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _ActionCard(
+                icon: Icons.people_outline,
+                title: 'Ouvriers',
+                subtitle: 'Trouver des artisans',
+                color: Colors.blue,
+                onTap: () {
+                  // TODO: Naviguer vers ouvriers
+                },
+              ),
             ),
-          ),
-        ],
-      ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _ActionCard(
+                icon: Icons.build_outlined,
+                title: 'Équipements',
+                subtitle: 'Louer du matériel',
+                color: Colors.orange,
+                onTap: () {
+                  // TODO: Naviguer vers équipements
+                },
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _ActionCard(
+                icon: Icons.assignment_outlined,
+                title: 'Projets',
+                subtitle: 'Gérer mes projets',
+                color: Colors.green,
+                onTap: () {
+                  // TODO: Naviguer vers projets
+                },
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _ActionCard(
+                icon: Icons.request_quote_outlined,
+                title: 'Devis',
+                subtitle: 'Demander un devis',
+                color: Colors.purple,
+                onTap: () {
+                  // TODO: Naviguer vers devis
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
+}
 
-  Widget _buildActionCard(BuildContext context, Map<String, dynamic> action) {
-    final color = action['color'] as Color;
-    final icon = action['icon'] as IconData;
-    final title = action['title'] as String;
-    final route = action['route'] as String;
+class _ActionCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color color;
+  final VoidCallback onTap;
 
-    return Container(
-      width: 80,
-      margin: const EdgeInsets.only(right: AppConfig.spacingM),
-      child: GestureDetector(
-        onTap: () => context.go(route),
+  const _ActionCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: 60,
-              height: 60,
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: color.withOpacity(0.3),
-                  width: 1,
-                ),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
                 icon,
                 color: color,
-                size: 28,
+                size: 24,
               ),
             ),
-            
-            const SizedBox(height: AppConfig.spacingS),
-            
+            const SizedBox(height: 12),
             Text(
               title,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w500,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
             ),
           ],
         ),

@@ -75,6 +75,10 @@ def create_app(config_name='development'):
     # Register blueprints
     from app.routes.auth import auth_bp
     from app.routes.users import users_bp
+    from app.routes.workers import workers_bp
+    from app.routes.equipment import equipment_bp
+    from app.routes.projects import projects_bp
+    from app.routes.bookings import bookings_bp
     from app.routes.btp import btp_bp
     from app.routes.agribusiness import agribusiness_bp
     from app.routes.mining import mining_bp
@@ -83,6 +87,10 @@ def create_app(config_name='development'):
     
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(users_bp, url_prefix='/api/users')
+    app.register_blueprint(workers_bp, url_prefix='/api/workers')
+    app.register_blueprint(equipment_bp, url_prefix='/api/equipment')
+    app.register_blueprint(projects_bp, url_prefix='/api/projects')
+    app.register_blueprint(bookings_bp, url_prefix='/api/bookings')
     app.register_blueprint(btp_bp, url_prefix='/api/btp')
     app.register_blueprint(agribusiness_bp, url_prefix='/api/agribusiness')
     app.register_blueprint(mining_bp, url_prefix='/api/mining')

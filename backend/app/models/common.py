@@ -102,7 +102,7 @@ class LocationMixin:
 
 class MetadataMixin:
     """Mixin for models with JSON metadata"""
-    metadata = Column(JSONB if JSONB else Text, nullable=True)
+    metadata = Column(JSON, nullable=True)
     
     def set_metadata(self, key, value):
         """Set metadata value"""
